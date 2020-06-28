@@ -8,13 +8,14 @@ Of course it's very ugly: my first glance at pygame, plus trying to copy a game 
 
 # Run:
 
-To run the game, you need python3 and pygame installed
+To run the game, you need python3 and pygame installed.
+
 On linux: 
-`pip install pygame`
+```pip install pygame```
 
 Just run main.py from the game directory to launch the game:
 
-`python main.py`
+```python main.py```
 
 # Log:
 
