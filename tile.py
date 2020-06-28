@@ -40,7 +40,17 @@ class TileOpaque(pygame.sprite.Sprite):
 
 class Block(Tile):
   def __init__(self, x=0, y=0):
-      super(Block, self).__init__(x,y,type = 2)
-      self.surf = pygame.Surface((25, 25))
-      self.surf.fill((200, 200, 200))
-      self.surf.fill((128,128,128), self.surf.get_rect().inflate(-2, -2))
+      super(Block, self).__init__(x,y,type = 1)
+      #self.surf = pygame.Surface((25, 25))
+      self.surf = pygame.image.load("sprites/block.png").convert()
+      self.surf.set_colorkey((255, 255, 255), RLEACCEL)
+      #self.rect = self.surf.get_rect()
+      #self.surf.fill((200, 200, 200))
+      #self.surf.fill((128,128,128), self.surf.get_rect().inflate(-2, -2))
+
+class StartBlock(Tile):
+  def __init__(self, x=0, y=0):
+      super(StartBlock, self).__init__(x,y,type = 2)
+      #self.surf = pygame.Surface((25, 25))
+      self.surf = pygame.image.load("sprites/start.png").convert()
+      self.surf.set_colorkey((0, 0, 0), RLEACCEL)

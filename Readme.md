@@ -25,3 +25,4 @@ Just run main.py from the game directory to launch the game:
   - Added simple moving camera
   - Respawn when outside of level borders
   - Copy/pasted physics engine, but wrong hitboxes (thus wrong legit distances and unusual glitches)
+  - Simple sprites

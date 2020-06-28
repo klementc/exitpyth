@@ -14,8 +14,10 @@ class Player(pygame.sprite.Sprite):
         super(Player, self).__init__()
         # TODO fine the right hitbox and player size
         #self.surf = pygame.image.load("test.png")
-        self.image = pygame.Surface((25, 25))
-        self.image.fill((255, 0, 0))
+        self.image = pygame.image.load("sprites/char_noFlow.png").convert()
+        self.image.set_colorkey((255, 255, 255), RLEACCEL)
+        #self.image = pygame.Surface((25, 25))
+        #self.image.fill((255, 0, 0))
         #self.image.set_colorkey((0, 0, 0), RLEACCEL)
         self.image.convert()
         #print("size: "+str(self.image.get_size()))
@@ -139,12 +141,16 @@ class Player(pygame.sprite.Sprite):
         # TODO stick not working, wrong hitbox sizes...
         # resize when crouching
         if(self.holdDown):
-            self.image = pygame.Surface((25, 12))
-            self.image.fill((255, 255, 255))
+            #self.image = pygame.Surface((25, 25))
+            #self.image.fill((255, 255, 255))
+            #self.image = pygame.image.load("sprites/char_noFlow.png").convert()
+            #self.image.set_colorkey((0, 0, 0), RLEACCEL)
             self.rect.height =7.5
         else:
-            self.image = pygame.Surface((25, 25))
-            self.image.fill((255, 255, 255))
+            #self.image = pygame.Surface((25, 25))
+            #self.image.fill((255, 255, 255))
+            #self.image = pygame.image.load("sprites/char_flow.png").convert()
+            #self.image.set_colorkey((0, 0, 0), RLEACCEL)
             self.rect.height = 15
 
         self.handleFlow(pressed_keys)
@@ -196,10 +202,14 @@ class Player(pygame.sprite.Sprite):
                 self.burningFlow = True
         
         if(self.burningFlow):
-            self.image.fill((0, 255, 0))
+            self.image = pygame.image.load("sprites/char_flow.png").convert()
+            self.image.set_colorkey((0, 0, 0), RLEACCEL)
+            #self.image.fill((0, 255, 0))
 
         else:
-            self.image.fill((255, 255, 255))
+            self.image = pygame.image.load("sprites/char_noFlow.png").convert()
+            self.image.set_colorkey((0, 0, 0), RLEACCEL)
+            #self.image.fill((255, 255, 255))
 
 
 
