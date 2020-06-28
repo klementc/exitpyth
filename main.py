@@ -21,7 +21,7 @@ player = Player()
 #print("limits: "+str(player.curLevel.maxWidth)+" "+str(player.curLevel.maxHeight))
 #cam = camera.Camera(camera.complex_camera, player.curLevel.maxWidth, player.curLevel.maxHeight)
 cam = camera.Camera(camera.simple_camera, player.curLevel.maxWidth, player.curLevel.maxHeight)
-textInputting = False
+showInput = False
 textinput = pygame_textinput.TextInput()
 textinput.text_color = (0,255,0)
 textinput.set_cursor_color((255,255,255))
@@ -30,10 +30,6 @@ textinput.set_cursor_color((255,255,255))
 while running:
     # Look at every event in the queue
     events = pygame.event.get()
-
-    if(textInputting):
-        print("textinputting")
-        textinput.update(events)
 
     for event in events:
         # Did the user hit a key?
@@ -45,14 +41,16 @@ while running:
                 player.init_level(LEVEL1)
             if event.key == K_z:
                 player.init_level(LEVEL2)
-            if(event.key == K_RETURN and textInputting==True):
+            if(event.key == K_RETURN):
                 print("clooooooooooooooooo")
-                print(textinput.get_text())
+                #print(textinput.get_text())
+                player.init_level(textinput.get_text())
+                showInput = False
                 textinput.clear_text()
-                textInputting = False
-            if(event.key == K_t and textInputting==False):
+            if(event.key == K_t):
                 print("YYYYYYYYYYYYYYYYYYYy")
-                textInputting = True
+                showInput = True
+                textinput.input_string="coucou"
         # Did the user click the window close button? If so, stop the loop.
         elif event.type == QUIT:
             running = False
@@ -70,7 +68,9 @@ while running:
         screen.blit(e.surf, cam.apply(e))
     screen.blit(player.image, cam.apply(player))
 
-    if(textInputting):
+    if(showInput):
+        print("textinputting")
+        textinput.update(events)
         screen.blit(textinput.get_surface(), (10, 10))
     #pygame.display.flip()
     pygame.display.update()
