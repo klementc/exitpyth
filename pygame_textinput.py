@@ -8,6 +8,7 @@ import os.path
 
 import pygame
 import pygame.locals as pl
+import pyperclip
 
 pygame.font.init()
 
@@ -81,6 +82,7 @@ class TextInput:
                 if event.key not in self.keyrepeat_counters:
                     self.keyrepeat_counters[event.key] = [0, event.unicode]
 
+
                 if event.key == pl.K_BACKSPACE:
                     self.input_string = (
                         self.input_string[:max(self.cursor_position - 1, 0)]
@@ -111,7 +113,8 @@ class TextInput:
 
                 elif event.key == pl.K_HOME:
                     self.cursor_position = 0
-
+                elif event.key == pygame.K_v and pygame.key.get_mods() & pygame.KMOD_CTRL:
+                    self.input_string = pyperclip.paste()
                 elif len(self.input_string) < self.max_string_length or self.max_string_length == -1:
                     # If no special key is pressed, add unicode of key to input_string
                     self.input_string = (
