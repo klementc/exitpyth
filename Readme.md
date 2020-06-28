@@ -8,14 +8,20 @@ Of course it's very ugly: my first glance at pygame, plus trying to copy a game 
 
 # Run:
 
-To run the game, you need python3 and pygame installed.
+To run the game, you need python3, pyperclip and pygame installed.
 
 On linux: 
-```pip install pygame```
+```bash
+pip install pygame
+pip install pyperclip
+```
+
 
 Just run main.py from the game directory to launch the game:
 
-```python main.py```
+```
+python main.py
+```
 
 # How to play? (as of june 28th)
 
@@ -30,8 +36,9 @@ Enter commands: `t` then command (none for now, but soon :))
 # Log:
 
 - 28/06:
+  - Type a level code (not epyck format for now) in the command input and enter to load it
   - Press `a` and `z` to load the 2 available levels
-  - Enter text by pressing t and return when command types (no use for now) 
+  - Enter text by pressing t and return when command typed
   - Levels with blocks only and loader
   - Basic GUI
   - Added simple moving camera
