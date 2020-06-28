@@ -2,6 +2,7 @@
 import pygame
 from player import Player
 import pygame_textinput
+import time
 
 from globals import *
 import camera
@@ -13,6 +14,7 @@ pygame.init()
 # The size is determined by the constant SCREEN_WIDTH and SCREEN_HEIGHT
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 clock = pygame.time.Clock()
+t0 = time.time()
 
 # Variable to keep the main loop running
 running = True
@@ -30,7 +32,6 @@ textinput.set_cursor_color((255,255,255))
 while running:
     # Look at every event in the queue
     events = pygame.event.get()
-
     for event in events:
         # Did the user hit a key?
         if event.type == KEYDOWN:
@@ -38,10 +39,13 @@ while running:
             if event.key == K_ESCAPE:
                 running = False
             if event.key == K_a:
+                t0 = time.time()
                 player.init_level(LEVEL1)
             if event.key == K_z:
+                t0 = time.time()
                 player.init_level(LEVEL2)
-            if(event.key == K_RETURN):
+            if(event.key == K_RETURN and showInput):
+                t0 = time.time()
                 print("clooooooooooooooooo")
                 #print(textinput.get_text())
                 player.init_level(textinput.get_text())
@@ -73,5 +77,10 @@ while running:
         textinput.update(events)
         screen.blit(textinput.get_surface(), (10, 10))
     #pygame.display.flip()
+
+    myfont = pygame.font.SysFont('Arial', 18)
+    textsurface = myfont.render("time: "+str(round(time.time()-t0,3)), False, (185, 185, 34))
+    screen.blit(textsurface,(SCREEN_WIDTH-100,0))
+
     pygame.display.update()
     clock.tick(30)
