@@ -3,6 +3,7 @@ import pygame
 from player import Player
 
 from globals import *
+import camera
 
 # Initialize pygame
 pygame.init()
@@ -16,7 +17,9 @@ clock = pygame.time.Clock()
 running = True
 
 player = Player()
-
+print("limits: "+str(player.curLevel.maxWidth)+" "+str(player.curLevel.maxHeight))
+#cam = camera.Camera(camera.complex_camera, player.curLevel.maxWidth, player.curLevel.maxHeight)
+cam = camera.Camera(camera.simple_camera, player.curLevel.maxWidth, player.curLevel.maxHeight)
 
 # Main loop
 while running:
@@ -36,8 +39,15 @@ while running:
     player.ping(pressed_keys)
 
     screen.fill((0, 0, 0))
-    screen.blit(player.curLevel.image, (0,0))#SCREEN_WIDTH/2, SCREEN_HEIGHT/2))
-    screen.blit(player.surf, player.rect )#(SCREEN_WIDTH/2, SCREEN_HEIGHT/2))
+    print("maxWH: "+str(player.curLevel.maxWidth)+" "+str(player.curLevel.maxHeight))
+    #screen.blit(player.curLevel.image, (0,0))#SCREEN_WIDTH/2, SCREEN_HEIGHT/2))
+    #screen.blit(player.surf, player.rect )#(SCREEN_WIDTH/2, SCREEN_HEIGHT/2))
+    cam.update(player)
+    for e in player.curLevel.tiles:
+        #print("tile x:"+str(e.x) )
+        screen.blit(e.surf, cam.apply(e))
+    screen.blit(player.image, cam.apply(player))
 
-    pygame.display.flip()
+    #pygame.display.flip()
+    pygame.display.update()
     clock.tick(30)

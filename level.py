@@ -42,6 +42,7 @@ class Level():
         self.popSpikes = []
         self.flowType = 0
         self.allowSuicide = False
+        self.endPoint = None
     
     def createLaserCannon(self, p1):
         # TODO
@@ -55,12 +56,15 @@ class Level():
         self.image = pygame.Surface((3000,3000))
         loc1 = 0
         for l in self.toPush:
-            print("generate tile:"+str(l[0].x))
+            #print("generate tile:"+str(l[0].x))
             loc2 = l[0]
             type = int(l[1])
 
             if(self.levelType=="SP"):
-                tile = Tile()
+                if(loc2.type == 1):
+                    tile = Block(round(loc2.x), round(loc2.y))
+                else:
+                    tile = Tile(round(loc2.x), round(loc2.y),loc2.type)
             else:
                 tile = TileOpaque()
             # TODO set up this instead of the 3 next lines
@@ -79,8 +83,14 @@ class Level():
 
             tile.x = tX
             tile.y = tY
-            print("tile pos: "+str(tX)+" "+str(tY))
-            pygame.draw.rect(self.image, (128,128,128), pygame.Rect(tile.x+12.5, tile.y+25, tile.tileSize, tile.tileSize),1)
+            
+            #print("tile pos: "+str(tX)+" "+str(tY)+" type:"+str(tile.typeOf))
+            #if(tile.type == 1):
+            #    pygame.draw.rect(self.image, (128,128,128), pygame.Rect(tile.x+12.5, tile.y+25, tile.tileSize, tile.tileSize),1)
+            #elif(tile.type == 2):
+            #    pygame.draw.rect(self.image, (255,0,0), pygame.Rect(tile.x+12.5, tile.y+25, tile.tileSize, tile.tileSize),1)
+
+
             if(tile.x > self.maxWidth):
                 self.maxWidth = tile.x
             if(tile.y > self.maxHeight):
@@ -121,10 +131,11 @@ class Level():
                 loc2 = None
 
             loc1 = int(loc1+1)
-        self.toPush =[]
+        #TODO self.toPush =[]
 
         if(self.arrayMode):
-            self.tiles = []
+            #TODO self.tiles = []
+            pass
         loc1 = 0
         while(loc1 < len(self.teleporters)):
             self.teleporters[loc1].init()

@@ -3,8 +3,10 @@ import math
 import random
 from level import Level
 from tile import *
+from levelLoader import LevelLoader
 
 from globals import *
+
 
 class Player(pygame.sprite.Sprite):
 
@@ -12,19 +14,18 @@ class Player(pygame.sprite.Sprite):
         super(Player, self).__init__()
         # TODO fine the right hitbox and player size
         #self.surf = pygame.image.load("test.png")
-        self.surf = pygame.Surface((25, 25))
-        self.surf.fill((255, 255, 255))
-        self.surf.set_colorkey((0, 0, 0), RLEACCEL)
-        print("size: "+str(self.surf.get_size()))
+        self.image = pygame.Surface((25, 25))
+        self.image.fill((255, 0, 0))
+        #self.image.set_colorkey((0, 0, 0), RLEACCEL)
+        self.image.convert()
+        #print("size: "+str(self.image.get_size()))
 
         #self.rect = pygame.Rect(self.surf.get_rect().left + 9, self.surf.get_rect().top+5, 8, self.surf.get_rect().height-10)
 
-        self.rect = pygame.Rect(self.surf.get_rect().left +5.6, self.surf.get_rect().top, 13.8, 15)
-
+        self.rect = pygame.Rect(self.image.get_rect(
+        ).left+7, self.image.get_rect().top, 9.8, 15)
 
         #self.rect = self.surf.get_rect()
-
-        
 
         self.username = "klem"
         self.tileSize = 25
@@ -34,6 +35,7 @@ class Player(pygame.sprite.Sprite):
         self.xMax = 20
         self.yMax = 20
         self.modX = 0
+        self.playerXMaxNorm = 8
         self.playerXMax = 8
         self.playerYMax = 20
         self.xAcc = 0.8
@@ -61,7 +63,7 @@ class Player(pygame.sprite.Sprite):
         self.typeOf = "deadaphant"
         self.yVel = 0
         self.yGrav = 0.6
-        self.bounce = -.3        
+        self.bounce = -.3
         self.beltSpeed = 2
         self.yF = 1
         self.flowType = 2
@@ -69,70 +71,16 @@ class Player(pygame.sprite.Sprite):
         self.flowPoints = 0
         self.curLevel = Level()
 
-
-        t = Tile(175,300)
-        self.curLevel.createTile(t)
-        ta = Tile(175,325)
-        self.curLevel.createTile(ta)
-        tc = Tile(175,350)
-        self.curLevel.createTile(tc)
-        tf = Tile(175,250)
-        self.curLevel.createTile(tf)
-        tf = Tile(175,225)
-        self.curLevel.createTile(tf)
-        tf = Tile(175,175)
-        self.curLevel.createTile(tf)
-        
-        td = Tile(175,275)
-        self.curLevel.createTile(td)
-        tb = Tile(50,350)
-        self.curLevel.createTile(tb)
-        tb = Tile(25,350)
-        self.curLevel.createTile(tb)
-        te = Tile(0,350)
-        self.curLevel.createTile(te)
-        self.curLevel.createTile(tb)
-        tb = Tile(75,350)
-        self.curLevel.createTile(tb)
-        te = Tile(100,350)
-        self.curLevel.createTile(te)
-        te = Tile(125,350)
-        self.curLevel.createTile(te)
-        te = Tile(150,350)
-        self.curLevel.createTile(te)
-        te = Tile(0,325)
-        self.curLevel.createTile(te)
-        te = Tile(0,325)
-        self.curLevel.createTile(te)
-        te = Tile(0,300)
-        self.curLevel.createTile(te)
-        te = Tile(0,275)
-        self.curLevel.createTile(te)
-        te = Tile(0,250)
-        self.curLevel.createTile(te)
-        te = Tile(0,225)
-        self.curLevel.createTile(te)
-        te = Tile(0,200)
-        self.curLevel.createTile(te)
-        te = Tile(0,175)
-        self.curLevel.createTile(te)
-        te = Tile(0,150)
-        self.curLevel.createTile(te)
-
-        t2 = Tile(0,25)
-        self.curLevel.createStartPoint(t2)
-        t2 = Tile(0,300)
-        self.curLevel.createStartPoint(t2)
+        ll = LevelLoader()
+        self.curLevel = ll.load(LEVEL1)
         self.curLevel.generateLevel()
-
-
-        
-
+        self.rect.left = self.curLevel.startPoint.x
+        self.rect.top = self.curLevel.startPoint.y
     def movePlayer(self, pressed_keys):
         x = self.rect.left
         y = self.rect.top
-        print(x, y)
-        print(pressed_keys)
+        #print(x, y)
+        #print(pressed_keys)
 
         # JUMP KEY
         if pressed_keys[K_UP]:
@@ -149,7 +97,7 @@ class Player(pygame.sprite.Sprite):
             print("down")
             if(not self.holdDown):
                 self.holdDownX = x
-            
+
             self.holdDown = True
             self.xF = 0.9
             self.scaleY = 0.5
@@ -157,8 +105,8 @@ class Player(pygame.sprite.Sprite):
             self.holdDown = False
             self.xF = .7
             self.scaleY = 1
-        
-        # LEFT KEY 
+
+        # LEFT KEY
         if pressed_keys[K_LEFT]:
             if(not self.holdDown):
                 if(self.xVel > -self.playerXMax):
@@ -169,7 +117,7 @@ class Player(pygame.sprite.Sprite):
             if(not self.holdDown):
                 if(self.xVel < self.playerXMax):
                     self.xVel += self.xAcc
-        
+
         # LEFT OR RIGHT
         if(pressed_keys[K_LEFT] or pressed_keys[K_RIGHT]):
             self.xF = 1
@@ -183,17 +131,30 @@ class Player(pygame.sprite.Sprite):
             self.playerXMax = self.playerXBurningMax
             self.xAcc = self.burningXAcc
         else:
+            self.playerXMax = self.playerXMaxNorm
             self.xAcc = self.normalXAcc
             # TODO
             # this.playerXMax = Anim.ease(this.playerXMax,this.playerXNormalMax,0.3);
 
+        # TODO stick not working, wrong hitbox sizes...
+        # resize when crouching
+        if(self.holdDown):
+            self.image = pygame.Surface((25, 12))
+            self.image.fill((255, 255, 255))
+            self.rect.height =7.5
+        else:
+            self.image = pygame.Surface((25, 25))
+            self.image.fill((255, 255, 255))
+            self.rect.height = 15
+
         self.handleFlow(pressed_keys)
+        print(str(self.burningFlow)+" "+str(self.xAcc)+" "+str(self.xVel))
 
 
 
     def doTheJump(self):
         self.holdUp = True
-        self.jumpCounter +=1
+        self.jumpCounter += 1
 
         if(self.yLove == 0 and self.jumpLevel and not self.hitHalf):
             self.playerJump = True
@@ -212,7 +173,7 @@ class Player(pygame.sprite.Sprite):
                 print("burn flow")
                 self.burningFlow = True
         if(self.burningFlow):
-            self.flowPoints = 100 # TODO
+            self.flowPoints = 100  # TODO
             if(not (keys[K_SPACE] or keys[K_LSHIFT])):
                 self.burningFlow = False
             elif(self.flowPoints <= 0):
@@ -233,11 +194,13 @@ class Player(pygame.sprite.Sprite):
 
             if((keys[K_SPACE] or keys[K_LSHIFT]) and self.flowPoints >= 100):
                 self.burningFlow = True
+        
         if(self.burningFlow):
-            self.surf.fill((0, 255, 0))
-            
+            self.image.fill((0, 255, 0))
+
         else:
-            self.surf.fill((255, 255, 255))
+            self.image.fill((255, 255, 255))
+
 
 
     def ping(self, pressed_keys):
@@ -254,7 +217,7 @@ class Player(pygame.sprite.Sprite):
         # TODO self.handleHalfTiles()
         self.updateTileInteraction()
         # TODO self.spikeInteraction()
-        # TODO self.levelInteraction()
+        self.levelInteraction()
         # TODO self.checkPointInteraction()
         # TODO self.teleporterInteraction()
 
@@ -263,16 +226,16 @@ class Player(pygame.sprite.Sprite):
         y = self.rect.top
         self.lastX = x
         self.lastY = y
-        
+
         self.normalVertical()
 
         # TODO
-        #if(self.curLevel.arrayMode):
+        # if(self.curLevel.arrayMode):
         #     self.bounding2();
         # else:
         #      self.bounding();
         self.bounding()
-         
+
         y = self.rect.top
         y = math.floor(y)
         self.rect.top = y
@@ -296,26 +259,26 @@ class Player(pygame.sprite.Sprite):
                 if(self.yVel >= 0):
                     self.yLove = 2
                     self.yVel = 0
-                      
+
             if(self.yLove == 2 or self.yLove == 3):
                 if(self.yVel > 0):
                     self.yLove = 3
-            
+
             if(self.yLove == 3 and self.yVel == 0 and not self.holdUp):
                 self.yLove = 0
                 self.holdCounter = 0
-            
+
             if(self.yLove == 0 and self.yVel > 1.5):
                 self.yLove = 3
-            
+
             if(self.yLove == 0):
                 self.playerJump = False
-            
+
         else:
             if(self.yLove == 1):
                 if(not self.holdUp):
                     self.yVel = self.yVel - 1
-               
+
                 if(self.yVel <= 0):
                     self.yLove = 2
                     self.yVel = 0
@@ -323,28 +286,27 @@ class Player(pygame.sprite.Sprite):
             if(self.yLove == 2 or self.yLove == 3):
                 if(self.yVel < 0):
                     self.yLove = 3
-            
+
             if(self.yLove == 3 and self.yVel == 0 and (not self.holdUp)):
                 self.yLove = 0
                 self.holdCounter = 0
-            
+
             if(self.yLove == 0 and self.yVel < 1.5):
                 self.yLove = 3
-            
+
             if(self.yLove == 0):
                 self.playerJump = False
-            
+
         if(self.yLove != 0):
             self.jumpLevel = False
-
 
     def bounding(self):
         x = self.rect.left
         y = self.rect.top
-        
+
         _loc_1 = 1
         if(self.yVel < 0):
-            if(self.checkTile(x,y + self.yVel,0,self.curLevel)):
+            if(self.checkTile(x, y + self.yVel, 0, self.curLevel)):
                 y = y + self.yVel
                 if(self.yGrav < 0):
                     y = math.ceil(y)
@@ -352,26 +314,24 @@ class Player(pygame.sprite.Sprite):
                 self.xVel = self.xVel * self.xF
                 self.yVel = self.yVel * self.bounce
                 self.rotSpeed = self.rotSpeed * -1
-                if(self.tr):   
-                    y = self.tr.y + self.tileSize + self.rect.height #self.targetObject.height
+                if(self.tr):
+                    y = self.tr.y + self.tileSize + self.rect.height  # self.targetObject.height
                     self.hitBlock(self.tr)
                     self.touchBlock(self.tr)
-                   
+
                 elif(self.tl):
-                    y = self.tl.y + self.tileSize + self.rect.height #self.targetObject.height
+                    y = self.tl.y + self.tileSize + self.rect.height  # self.targetObject.height
                     self.hitBlock(self.tl)
                     self.touchBlock(self.tl)
 
                 if(self.yVel < self.thudTresh and self.yVel > -self.thudTresh):
                     self.yVel = 0
-                   
+
                 if(self.yGrav < 0):
                     self.jumping = False
-                   
-            
-         
+
         elif(self.yVel > 0):
-            if(self.checkTile(x,y + self.yVel,1,self.curLevel)):
+            if(self.checkTile(x, y + self.yVel, 1, self.curLevel)):
                 y = y + self.yVel
             else:
 
@@ -379,63 +339,65 @@ class Player(pygame.sprite.Sprite):
                 self.yVel = self.yVel * self.bounce
                 if(self.yGrav > 0):
                     self.jumping = False
-                  
+
                 if(self.bl):
                     y = self.bl.y
                     self.touchBlock(self.bl)
-                  
+
                 elif(self.br):
                     y = self.br.y
                     self.touchBlock(self.br)
-                  
+
                 elif(self.bm):
                     y = self.bm.y
                     self.touchBlock(self.bm)
-                  
+
                 if(self.yVel < self.thudTresh and self.yVel > -self.thudTresh):
                     self.yVel = 0
-                  
+
                 if(abs(self.yVel) > 6):
-                    self.rotSpeed = self.rotSpeed * (math.floor(random.random()*8) - 4)
+                    self.rotSpeed = self.rotSpeed * \
+                        (math.floor(random.random()*8) - 4)
                 else:
-                  self.rotSpeed = self.rotSpeed * 0.5
-                  
+                    self.rotSpeed = self.rotSpeed * 0.5
+
         if(self.xVel < 0):
-            if(self.checkTile(x + self.xVel + self.modX,y,3,self.curLevel)):
+            if(self.checkTile(x + self.xVel + self.modX, y, 3, self.curLevel)):
                 x = x + (self.xVel + self.modX)
             else:
                 self.yVel = self.yVel * self.yF
                 self.xVel = self.xVel * self.bounce
-                #                if(self.xVel < self.bounceTolerance):               
+                #                if(self.xVel < self.bounceTolerance):
                 if(self.bl):
-                    x = self.bl.x + self.rect.width/2 + self.tileSize # self.targetObject.width / 2 + self.tileSize
+                    # self.targetObject.width / 2 + self.tileSize
+                    x = self.bl.x + self.rect.width/2 + self.tileSize
                     self.touchBlock(self.bl)
-                    
+
                 elif(self.br):
-                    x = self.br.x - self.rect.width / 2 + self.tileSize #self.targetObject.width / 2 + self.tileSize
+                    # self.targetObject.width / 2 + self.tileSize
+                    x = self.br.x - self.rect.width / 2 + self.tileSize
                     self.touchBlock(self.br)
-                  
+
                 if(self.xVel < self.thudTresh and self.xVel > -self.thudTresh):
                     self.xVel = 0.0
         elif(self.xVel > 0):
-            if(self.checkTile(x + self.xVel + self.modX,y,2,self.curLevel)):
+            if(self.checkTile(x + self.xVel + self.modX, y, 2, self.curLevel)):
                 x = x + (self.xVel + self.modX)
-               
+
             else:
                 self.yVel = self.yVel * self.yF
                 self.xVel = self.xVel * self.bounce
                #               if(self.xVel > self.bounceTolerance):
-               
-               
-                if(self.br):  
-                   x = self.br.x - self.rect.width/2 #self.targetObject.width / 2
-                   self.touchBlock(self.br)
+
+                if(self.br):
+                    x = self.br.x - self.rect.width/2  # self.targetObject.width / 2
+                    self.touchBlock(self.br)
                 elif(self.bl):
-                   x = self.bl.x + self.rect.width/2 #self.targetObject.width / 2
-                   self.touchBlock(self.bl)
+                    x = self.bl.x + self.rect.width/2  # self.targetObject.width / 2
+                    self.touchBlock(self.bl)
                 if(self.xVel < self.thudTresh and self.xVel > -self.thudTresh):
                     self.xVel = 0.0
-                  
+
         if(self.xVel > self.xMax):
             self.xVel = self.xMax
         if(self.xVel < -self.xMax):
@@ -444,14 +406,13 @@ class Player(pygame.sprite.Sprite):
             self.yVel = self.yMax
         if(self.yVel < -self.yMax):
             self.yVel = -self.yMax
-    
-    
+
         self.rect.left = x
         self.rect.top = y
-        print("xvel: "+str(self.xVel)+" xF:"+str(self.xF))
+        #print("xvel: "+str(self.xVel)+" xF:"+str(self.xF))
 
         # TODO there isn't this in the game, but otherwise, weird left slide, find out why
-        if(abs(self.xVel) < 0.01):
+        if(abs(self.xVel) < 0.0001):
             self.xVel = 0.0
 
     def checkTile(self, param1, param2, param3, param4):
@@ -463,8 +424,8 @@ class Player(pygame.sprite.Sprite):
         self.guyTM = False
         self.guyLM = False
         self.guyRM = False
-        _loc_5 = self.rect.width # targetObject.width;
-        _loc_6 = self.rect.height #targetObject.height;
+        _loc_5 = self.rect.width  # targetObject.width;
+        _loc_6 = self.rect.height  # targetObject.height;
         print("player: "+str(_loc_5)+" "+str(_loc_6))
         self.ctlx = param1 - _loc_5 / 2 + 1
         self.ctly = param2 - _loc_6 + 1
@@ -484,15 +445,24 @@ class Player(pygame.sprite.Sprite):
         self.cbmy = param2 - 1
         self.cmx = self.ctmx
         self.cmy = self.clmy
-        self.tl = self.curLevel.getChildByName("tile" + str(math.floor(self.ctlx / self.tileSize)) + "x" + str(math.floor(self.ctly / self.tileSize)))
-        self.tr = self.curLevel.getChildByName("tile" + str(math.floor(self.ctrx / self.tileSize)) + "x" + str(math.floor(self.ctry / self.tileSize)))
-        self.br = self.curLevel.getChildByName("tile" + str(math.floor(self.cbrx / self.tileSize)) + "x" + str(math.floor(self.cbry / self.tileSize))) 
-        self.bl = self.curLevel.getChildByName("tile" + str(math.floor(self.cblx / self.tileSize)) + "x" + str(math.floor(self.cbly / self.tileSize)))
-        self.tm = self.curLevel.getChildByName("tile" + str(math.floor(self.ctmx / self.tileSize)) + "x" + str(math.floor(self.ctmy / self.tileSize)))
-        self.lm = self.curLevel.getChildByName("tile" + str(math.floor(self.clmx / self.tileSize)) + "x" + str(math.floor(self.clmy / self.tileSize)))
-        self.bm = self.curLevel.getChildByName("tile" + str(math.floor(self.cbmx / self.tileSize)) + "x" + str(math.floor(self.cbmy / self.tileSize))) 
-        self.rm = self.curLevel.getChildByName("tile" + str(math.floor(self.crmx / self.tileSize)) + "x" + str(math.floor(self.crmy / self.tileSize))) 
-        self.mb = self.curLevel.getChildByName("tile" + str(math.floor(self.cbmx / self.tileSize)) + "x" + str(math.floor(self.cbly / self.tileSize)))
+        self.tl = self.curLevel.getChildByName("tile" + str(math.floor(
+            self.ctlx / self.tileSize)) + "x" + str(math.floor(self.ctly / self.tileSize)))
+        self.tr = self.curLevel.getChildByName("tile" + str(math.floor(
+            self.ctrx / self.tileSize)) + "x" + str(math.floor(self.ctry / self.tileSize)))
+        self.br = self.curLevel.getChildByName("tile" + str(math.floor(
+            self.cbrx / self.tileSize)) + "x" + str(math.floor(self.cbry / self.tileSize)))
+        self.bl = self.curLevel.getChildByName("tile" + str(math.floor(
+            self.cblx / self.tileSize)) + "x" + str(math.floor(self.cbly / self.tileSize)))
+        self.tm = self.curLevel.getChildByName("tile" + str(math.floor(
+            self.ctmx / self.tileSize)) + "x" + str(math.floor(self.ctmy / self.tileSize)))
+        self.lm = self.curLevel.getChildByName("tile" + str(math.floor(
+            self.clmx / self.tileSize)) + "x" + str(math.floor(self.clmy / self.tileSize)))
+        self.bm = self.curLevel.getChildByName("tile" + str(math.floor(
+            self.cbmx / self.tileSize)) + "x" + str(math.floor(self.cbmy / self.tileSize)))
+        self.rm = self.curLevel.getChildByName("tile" + str(math.floor(
+            self.crmx / self.tileSize)) + "x" + str(math.floor(self.crmy / self.tileSize)))
+        self.mb = self.curLevel.getChildByName("tile" + str(math.floor(
+            self.cbmx / self.tileSize)) + "x" + str(math.floor(self.cbly / self.tileSize)))
 
         if(self.tl):
             if(self.tl.type == 1):
@@ -559,7 +529,7 @@ class Player(pygame.sprite.Sprite):
         if(self.yGrav > 0):
             if(self.guyBM or self.guyBL or self.guyBR):
                 self.yLove = 0
-                self.holdCounter = 0;
+                self.holdCounter = 0
             if(self.playerSize == 0):
                 if(self.guyBM and self.guyBL or self.guyBM and self.guyBR):
                     self.jumpLevel = True
@@ -581,22 +551,41 @@ class Player(pygame.sprite.Sprite):
             if(self.guyTM and self.guyTL or self.guyTM and self.guyTR):
                 self.jumpLevel = True
 
-        if(param3==0):
+        if(param3 == 0):
             if(self.guyTL or self.guyTR):
                 return False
-        elif(param3==1):
+        elif(param3 == 1):
             if(self.guyBR or self.guyBL):
                 return False
-        elif(param3==2):
+        elif(param3 == 2):
             if(self.guyTR or self.guyBR):
                 return False
-        elif(param3==3):
+        elif(param3 == 3):
             if(self.guyTL or self.guyBL):
                 return False
         else:
             if(self.guyTL or self.guyBL):
                 return False
         return True
-        
+
     def hitBlock(self, p1):
         pass
+
+    def levelInteraction(self):
+        y = self.rect.top
+        if((self.curLevel.maxHeight <= 550 and y > 650) or (self.curLevel.maxHeight > 550 and y > self.curLevel.maxHeight+150)):
+            self.kill()
+            # TODO
+            self.rect.top = self.curLevel.startPoint.x
+            self.rect.left = self.curLevel.startPoint.y
+            #########
+        if(self.hitTestObject(self.curLevel.endPoint)):
+            self.completedLevel = true
+
+    def kill(self):
+        # TODO
+        pass
+
+    def hitTestObject(self, o):
+        # TODO simple boundings verif
+        return False
