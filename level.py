@@ -112,6 +112,7 @@ class Level():
                     pass
             # TODO _tile.gotoAndStop(_tile.typeOf);   
             if(type == 2):
+                print("Start: "+str(tile.x)+" "+str(tile.y))
                 self.startPoint = tile
             if(type == 4):
                 self.endPoint = tile 

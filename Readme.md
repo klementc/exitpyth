@@ -17,9 +17,21 @@ Just run main.py from the game directory to launch the game:
 
 ```python main.py```
 
+# How to play? (as of june 28th)
+
+Move: arrows
+
+Flow: shift (inf flow for now)
+
+Change level: `a` and `z`
+
+Enter commands: `t` then command (none for now, but soon :)) 
+
 # Log:
 
 - 28/06:
+  - Press `a` and `z` to load the 2 available levels
+  - Enter text by pressing t and return when command types (no use for now) 
   - Levels with blocks only and loader
   - Basic GUI
   - Added simple moving camera

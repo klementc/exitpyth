@@ -22,10 +22,10 @@ class Player(pygame.sprite.Sprite):
         self.image.convert()
         #print("size: "+str(self.image.get_size()))
 
-        #self.rect = pygame.Rect(self.surf.get_rect().left + 9, self.surf.get_rect().top+5, 8, self.surf.get_rect().height-10)
+        self.rect = pygame.Rect(self.image.get_rect().left + 9, self.image.get_rect().top+5, 8, self.image.get_rect().height-10)
 
-        self.rect = pygame.Rect(self.image.get_rect(
-        ).left+7, self.image.get_rect().top, 9.8, 15)
+        #self.rect = pygame.Rect(self.image.get_rect().left+6.9, self.image.get_rect().top, 13.8, 15)
+        self.rect.center = (12.5,12.5)
 
         #self.rect = self.surf.get_rect()
 
@@ -78,6 +78,13 @@ class Player(pygame.sprite.Sprite):
         self.curLevel.generateLevel()
         self.rect.left = self.curLevel.startPoint.x
         self.rect.top = self.curLevel.startPoint.y
+
+    def init_level(self, lcode):
+        self.curLevel = LevelLoader().load(lcode)
+        self.curLevel.generateLevel()
+        self.rect.left = self.curLevel.startPoint.x
+        self.rect.top = self.curLevel.startPoint.y
+
     def movePlayer(self, pressed_keys):
         x = self.rect.left
         y = self.rect.top
@@ -145,7 +152,7 @@ class Player(pygame.sprite.Sprite):
             #self.image.fill((255, 255, 255))
             #self.image = pygame.image.load("sprites/char_noFlow.png").convert()
             #self.image.set_colorkey((0, 0, 0), RLEACCEL)
-            self.rect.height =7.5
+            self.rect.height =7
         else:
             #self.image = pygame.Surface((25, 25))
             #self.image.fill((255, 255, 255))
@@ -586,8 +593,8 @@ class Player(pygame.sprite.Sprite):
         if((self.curLevel.maxHeight <= 550 and y > 650) or (self.curLevel.maxHeight > 550 and y > self.curLevel.maxHeight+150)):
             self.kill()
             # TODO
-            self.rect.top = self.curLevel.startPoint.x
-            self.rect.left = self.curLevel.startPoint.y
+            self.rect.top = self.curLevel.startPoint.y
+            self.rect.left = self.curLevel.startPoint.x
             #########
         if(self.hitTestObject(self.curLevel.endPoint)):
             self.completedLevel = true
