@@ -114,7 +114,7 @@ class TextInput:
                 elif event.key == pl.K_HOME:
                     self.cursor_position = 0
                 elif event.key == pygame.K_v and pygame.key.get_mods() & pygame.KMOD_CTRL:
-                    self.input_string = pyperclip.paste()
+                    self.input_string += pyperclip.paste()
                 elif len(self.input_string) < self.max_string_length or self.max_string_length == -1:
                     # If no special key is pressed, add unicode of key to input_string
                     self.input_string = (

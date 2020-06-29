@@ -636,7 +636,7 @@ class Player(pygame.sprite.Sprite):
                     self.xVel = 0
                 elif(not self.holdDown):
                     self.xVel = self.xVel*0.7
-            print("HALFFFFFF: "+str(self.hitHalf))
+            #print("HALFFFFFF: "+str(self.hitHalf))
 
     def spikeInteraction(self):
         for spike in self.curLevel.spikes:

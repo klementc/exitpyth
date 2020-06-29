@@ -7,6 +7,15 @@ import time
 from globals import *
 import camera
 
+def message_box(text, f):
+    pos = 50 # depends on message box location
+    screen.blit(f.render("<tab> to hide/show chat", 0, (200,200,200)), ( 0, 27))
+    for x in range(len(text)):
+        rendered = f.render(text[x], 0, (255,255,255))
+        screen.blit(rendered, ( 0, pos))
+        pos += 20 # moves the following line down 30 pixels
+
+
 # Initialize pygame
 pygame.init()
 
@@ -28,6 +37,10 @@ textinput = pygame_textinput.TextInput()
 textinput.text_color = (0,255,0)
 textinput.set_cursor_color((255,255,255))
 
+showChat = True
+
+msgBuffer = ["!say <message> to speak","!set <code> to set level"]
+
 # Main loop
 while running:
     # Look at every event in the queue
@@ -41,20 +54,27 @@ while running:
             if event.key == K_a:
                 t0 = time.time()
                 player.init_level(LEVEL1)
+            if event.key == K_TAB:
+                showChat = not showChat
             if event.key == K_z:
                 t0 = time.time()
                 player.init_level(LEVEL2)
             if(event.key == K_RETURN and showInput):
                 t0 = time.time()
-                print("clooooooooooooooooo")
                 #print(textinput.get_text())
-                player.init_level(textinput.get_text())
+                if(not " " in textinput.get_text()):
+                    continue
+                c, v = textinput.get_text().split(" ",1)
+                if(c == "!set"):
+                    player.init_level(v)
+                elif(c=="!say"):
+                    msgBuffer.append(player.username+": "+v)
+                    if(len(msgBuffer)>7):
+                        msgBuffer=msgBuffer[1:]
                 showInput = False
                 textinput.clear_text()
             if(event.key == K_t):
-                print("YYYYYYYYYYYYYYYYYYYy")
                 showInput = True
-                textinput.input_string=""
         # Did the user click the window close button? If so, stop the loop.
         elif event.type == QUIT:
             running = False
@@ -85,8 +105,11 @@ while running:
     #pygame.display.flip()
 
     myfont = pygame.font.SysFont('Arial', 18)
-    textsurface = myfont.render("time: "+str(round(time.time()-t0,3)), False, (185, 185, 34))
-    screen.blit(textsurface,(SCREEN_WIDTH-100,0))
+    textsurface = myfont.render(str(round(time.time()-t0,3)), False, (185, 185, 34))
+    screen.blit(textsurface,(SCREEN_WIDTH/2,0))
+
+    if(showChat):
+        message_box(msgBuffer,myfont)
 
     pygame.display.update()
     clock.tick(30)

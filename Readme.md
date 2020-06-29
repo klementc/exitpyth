@@ -41,6 +41,8 @@ Enter commands: `t` then command (none for now, but soon :))
 # Log:
 
 - v0.1
+  - fixed themine level code
+  - chat (no online for now)
   - Sprite color different when jump available and when not
   - Added checkpoints
   - Added spikes
