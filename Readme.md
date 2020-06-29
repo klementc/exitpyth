@@ -33,9 +33,19 @@ Change level: `a` and `z`
 
 Enter commands: `t` then command (none for now, but soon :)) 
 
+# Important TODO
+
+- player hitbox is wrong
+- spikes hitbox is wrong
+
 # Log:
 
-- 28/06:
+- v0.1
+  - Sprite color different when jump available and when not
+  - Added checkpoints
+  - Added spikes
+  - Added half blocks
+  - Example of level codes
   - Type a level code (not epyck format for now) in the command input and enter to load it
   - Press `a` and `z` to load the 2 available levels
   - Enter text by pressing t and return when command typed

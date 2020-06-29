@@ -24,6 +24,8 @@ class Player(pygame.sprite.Sprite):
 
         self.rect = pygame.Rect(self.image.get_rect().left + 9, self.image.get_rect().top+5, 8, self.image.get_rect().height-10)
 
+        #self.rect = pygame.Rect(self.image.get_rect().left+5.6, self.image.get_rect().top, 13.8, 15)
+
         #self.rect = pygame.Rect(self.image.get_rect().left+6.9, self.image.get_rect().top, 13.8, 15)
         self.rect.center = (12.5,12.5)
 
@@ -104,9 +106,6 @@ class Player(pygame.sprite.Sprite):
         # CROUCH KEY
         if pressed_keys[K_DOWN]:
             print("down")
-            if(not self.holdDown):
-                self.holdDownX = x
-
             self.holdDown = True
             self.xF = 0.9
             self.scaleY = 0.5
@@ -152,7 +151,7 @@ class Player(pygame.sprite.Sprite):
             #self.image.fill((255, 255, 255))
             #self.image = pygame.image.load("sprites/char_noFlow.png").convert()
             #self.image.set_colorkey((0, 0, 0), RLEACCEL)
-            self.rect.height =7
+            self.rect.height = .5
         else:
             #self.image = pygame.Surface((25, 25))
             #self.image.fill((255, 255, 255))
@@ -209,12 +208,18 @@ class Player(pygame.sprite.Sprite):
                 self.burningFlow = True
         
         if(self.burningFlow):
-            self.image = pygame.image.load("sprites/char_flow.png").convert()
+            if(not self.jumpLevel):
+                self.image = pygame.image.load("sprites/char_flow.png").convert()
+            else:
+                self.image = pygame.image.load("sprites/char_flow_j.png").convert()
             self.image.set_colorkey((0, 0, 0), RLEACCEL)
             #self.image.fill((0, 255, 0))
 
         else:
-            self.image = pygame.image.load("sprites/char_noFlow.png").convert()
+            if(not self.jumpLevel):
+                self.image = pygame.image.load("sprites/char_noFlow.png").convert()
+            else:
+                self.image = pygame.image.load("sprites/char_noFlow_j.png").convert()
             self.image.set_colorkey((0, 0, 0), RLEACCEL)
             #self.image.fill((255, 255, 255))
 
@@ -231,11 +236,11 @@ class Player(pygame.sprite.Sprite):
         # TODO verify if in game blablabla
         self.movePlayer(pressed_keys)
 
-        # TODO self.handleHalfTiles()
+        self.handleHalfTiles()
         self.updateTileInteraction()
-        # TODO self.spikeInteraction()
+        self.spikeInteraction()
         self.levelInteraction()
-        # TODO self.checkPointInteraction()
+        self.checkPointInteraction()
         # TODO self.teleporterInteraction()
 
     def updateTileInteraction(self):
@@ -592,17 +597,56 @@ class Player(pygame.sprite.Sprite):
         y = self.rect.top
         if((self.curLevel.maxHeight <= 550 and y > 650) or (self.curLevel.maxHeight > 550 and y > self.curLevel.maxHeight+150)):
             self.kill()
-            # TODO
-            self.rect.top = self.curLevel.startPoint.y
-            self.rect.left = self.curLevel.startPoint.x
-            #########
         if(self.hitTestObject(self.curLevel.endPoint)):
-            self.completedLevel = true
+            self.completedLevel = True
 
     def kill(self):
-        # TODO
+        self.rect.top = self.curLevel.startPoint.y
+        self.rect.left = self.curLevel.startPoint.x
+        # TODO checkpoints
         pass
 
     def hitTestObject(self, o):
-        # TODO simple boundings verif
+        # TODO simple boundings verif (pas sur mdr)
+        
+        if(o == None):
+            return False
+
+        if(o.type == 5):
+            r = o.hitA
+        # if spike, TODO same for some others
+        else:
+            r = o.rect
+
+        if(self.rect.left > r.left and self.rect.left < r.right and self.rect.top > r.top and self.rect.top < r.bottom):
+            return True
+
+        if(self.rect.right < r.right and self.rect.right > r.left and self.rect.bottom > r.top and self.rect.bottom < r.bottom):
+            return True
+
         return False
+
+
+    def handleHalfTiles(self):
+        self.hitHalf = False
+        for ht in self.curLevel.halfTiles:
+            if(self.hitTestObject(ht)):
+                self.hitHalf = True
+                if(self.jumpLevel == False):
+                    self.xVel = 0
+                elif(not self.holdDown):
+                    self.xVel = self.xVel*0.7
+            print("HALFFFFFF: "+str(self.hitHalf))
+
+    def spikeInteraction(self):
+        for spike in self.curLevel.spikes:
+            if(self.hitTestObject(spike)):
+                self.kill()
+                return
+
+    def checkPointInteraction(self):
+        for ch in self.curLevel.checkPoints:
+            if(self.hitTestObject(ch)):
+                if(self.curLevel.startPoint != ch):
+                    # TODO verif on l'a pas deja
+                    self.curLevel.startPoint = ch

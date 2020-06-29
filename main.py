@@ -54,7 +54,7 @@ while running:
             if(event.key == K_t):
                 print("YYYYYYYYYYYYYYYYYYYy")
                 showInput = True
-                textinput.input_string="coucou"
+                textinput.input_string=""
         # Did the user click the window close button? If so, stop the loop.
         elif event.type == QUIT:
             running = False
@@ -68,6 +68,12 @@ while running:
     #screen.blit(player.surf, player.rect )#(SCREEN_WIDTH/2, SCREEN_HEIGHT/2))
     cam.update(player)
     for e in player.curLevel.tiles:
+        #print("tile x:"+str(e.x) )
+        screen.blit(e.surf, cam.apply(e))
+    for e in player.curLevel.halfTiles:
+        #print("tile x:"+str(e.x) )
+        screen.blit(e.surf, cam.apply(e))
+    for e in player.curLevel.checkPoints:
         #print("tile x:"+str(e.x) )
         screen.blit(e.surf, cam.apply(e))
     screen.blit(player.image, cam.apply(player))

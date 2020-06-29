@@ -23,9 +23,18 @@ class LevelLoader:
       elif(type == "2"):
         t = Tile(int(x), int(y),2)
         level.createStartPoint(t)
+      elif(type == "3"):
+        t = Tile(int(x), int(y), 3)
+        level.createHalfBlock(t)
+      elif(type == "5"):
+        t = Spike(int(x), int(y))
+        level.createSpike(t)
+      elif(type == "6"):
+        t = Checkpoint(int(x), int(y))
+        level.addCheckpoint(t)
       else:
-        # TODO other blocks
-        pass
+        t = Tile(int(x), int(y), 5)
+        level.createTile(t)
 
     return level
 

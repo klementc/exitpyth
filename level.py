@@ -60,11 +60,18 @@ class Level():
             loc2 = l[0]
             type = int(l[1])
 
+            print("type: "+str(type))
             if(self.levelType=="SP"):
                 if(type == 1):
                     tile = Block(round(loc2.x), round(loc2.y))
                 elif(type == 2):
                     tile = StartBlock(round(loc2.x), round(loc2.y))
+                elif(type == 3):
+                    tile = HalfTile(round(loc2.x), round(loc2.y))
+                elif(type == 5):
+                    tile = Spike(round(loc2.x), round(loc2.y))
+                elif(type == 6):
+                    tile = Checkpoint(round(loc2.x), round(loc2.y))
                 else:
                     tile = Tile(round(loc2.x), round(loc2.y),loc2.type)
             else:
@@ -83,8 +90,8 @@ class Level():
             tY = round(loc2.y)
             tile.rotation = loc2.rotation
 
-            tile.x = tX
-            tile.y = tY
+            #tile.x = tX
+            #tile.y = tY
             
             #print("tile pos: "+str(tX)+" "+str(tY)+" type:"+str(tile.typeOf))
             #if(tile.type == 1):
@@ -102,7 +109,7 @@ class Level():
             if(tile.typeOf != 3 and loc2.rotation%90 == 0 and (tile.typeOf != 99 or loc2.name[:1] != "t")):
                 self.tiles.append(tile)
             
-            elif(tile.typeof == 3):
+            elif(tile.typeOf == 3):
                 self.halfTiles.append(tile)
             
             # TODO addChild(_tile);
@@ -156,8 +163,10 @@ class Level():
         pass
 
     def addCheckpoint(self, p1):
-        # TODO
-        pass    
+        c = p1
+        c.id = self.checkPointID
+        self.checkPointID+=1
+        self.checkPoints.append(c)
 
     def repaint(self):
         # TODO
@@ -175,10 +184,6 @@ class Level():
         # TODO
         pass
 
-    def createSpikeAt(self, p1):
-        # TODO
-        pass
-
     def createPopSpikes(self, p1):
         # TODO
         pass
@@ -188,7 +193,8 @@ class Level():
         pass
 
     def createSpike(self, p1):
-        # TODO
+        self.spikes.append(p1)
+        self.createTileAt(p1, 5)
         pass
 
     def createStartPoint(self, p1):
@@ -199,8 +205,7 @@ class Level():
         pass
 
     def createHalfBlock(self, p1):
-        # TODO
-        pass
+        self.createTileAt(p1,3)
 
     def createEndPoint(self, p1):
         # TODO
