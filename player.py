@@ -22,12 +22,12 @@ class Player(pygame.sprite.Sprite):
         self.image.convert()
         #print("size: "+str(self.image.get_size()))
 
-        self.rect = pygame.Rect(self.image.get_rect().left + 9, self.image.get_rect().top+5, 8, self.image.get_rect().height-10)
+        self.rect = self.image.get_rect(center=self.image.get_rect().center).inflate(-11.2, -10) #pygame.Rect(self.image.get_rect().left + 9, self.image.get_rect().top+5, 8, self.image.get_rect().height-10)
 
         #self.rect = pygame.Rect(self.image.get_rect().left+5.6, self.image.get_rect().top, 13.8, 15)
 
         #self.rect = pygame.Rect(self.image.get_rect().left+6.9, self.image.get_rect().top, 13.8, 15)
-        self.rect.center = (12.5,12.5)
+        #self.rect.center = (12.5,12.5)
 
         #self.rect = self.surf.get_rect()
 
@@ -74,14 +74,15 @@ class Player(pygame.sprite.Sprite):
         self.fullFlow = False
         self.flowPoints = 0
         self.curLevel = Level()
+        self.code = ""
 
         ll = LevelLoader()
         self.curLevel = ll.load(LEVEL1)
         self.curLevel.generateLevel()
-        self.rect.left = self.curLevel.startPoint.x
-        self.rect.top = self.curLevel.startPoint.y
+        self.rect.center = (self.curLevel.startPoint.x,self.curLevel.startPoint.y)
 
     def init_level(self, lcode):
+        self.code = lcode
         self.curLevel = LevelLoader().load(lcode)
         self.curLevel.generateLevel()
         self.rect.left = self.curLevel.startPoint.x
@@ -95,7 +96,7 @@ class Player(pygame.sprite.Sprite):
 
         # JUMP KEY
         if pressed_keys[K_UP]:
-            print("up")
+            #print("up")
             if(not self.holdUp):
                 self.doTheJump()
                 self.holdUp = True
@@ -105,7 +106,7 @@ class Player(pygame.sprite.Sprite):
 
         # CROUCH KEY
         if pressed_keys[K_DOWN]:
-            print("down")
+            #print("down")
             self.holdDown = True
             self.xF = 0.9
             self.scaleY = 0.5
@@ -160,7 +161,7 @@ class Player(pygame.sprite.Sprite):
             self.rect.height = 15
 
         self.handleFlow(pressed_keys)
-        print(str(self.burningFlow)+" "+str(self.xAcc)+" "+str(self.xVel))
+        #print(str(self.burningFlow)+" "+str(self.xAcc)+" "+str(self.xVel))
 
 
 
@@ -179,10 +180,10 @@ class Player(pygame.sprite.Sprite):
             return
         if(self.flowType == 2):
             if(self.burningFlow and not (keys[K_SPACE] or keys[K_LSHIFT])):
-                print("stop flow")
+                #print("stop flow")
                 self.burningFlow = False
             else:
-                print("burn flow")
+                #print("burn flow")
                 self.burningFlow = True
         if(self.burningFlow):
             self.flowPoints = 100  # TODO
@@ -448,7 +449,7 @@ class Player(pygame.sprite.Sprite):
         self.guyRM = False
         _loc_5 = self.rect.width  # targetObject.width;
         _loc_6 = self.rect.height  # targetObject.height;
-        print("player: "+str(_loc_5)+" "+str(_loc_6))
+        #print("player: "+str(_loc_5)+" "+str(_loc_6))
         self.ctlx = param1 - _loc_5 / 2 + 1
         self.ctly = param2 - _loc_6 + 1
         self.ctrx = param1 + _loc_5 / 2 - 1
@@ -487,21 +488,21 @@ class Player(pygame.sprite.Sprite):
             self.cbmx / self.tileSize)) + "x" + str(math.floor(self.cbly / self.tileSize)))
 
         if(self.tl):
-            if(self.tl.type == 1):
+            if(self.tl.type == 1 or self.tl.type == 7):
                 self.guyTL = True
                 _loc_7 = self.tl
                 # TODO self.pass(self.tl);
             else:
                 self.guyTL = False
         if(self.tr):
-            if(self.tr.type == 1):
+            if(self.tr.type == 1 or self.tr.type == 7):
                 self.guyTR = True
                 _loc_7 = self.tr
                 # TODO self.pass(self.tr);
             else:
                 self.guyTR = False
         if(self.br):
-            if(self.br.type == 1):
+            if(self.br.type == 1 or self.br.type == 7):
                 self.guyBR = True
                 _loc_7 = self.br
                 # TODO self.pass(self.br);
@@ -511,7 +512,7 @@ class Player(pygame.sprite.Sprite):
             else:
                 self.guyBR = False
         if(self.bl):
-            if(self.bl.type == 1):
+            if(self.bl.type == 1 or self.bl.type == 7):
                 self.guyBL = True
                 _loc_7 = self.bl
                 # TODO self.pass(self.bl);
@@ -521,28 +522,28 @@ class Player(pygame.sprite.Sprite):
             else:
                 self.guyBL = False
         if(self.tm):
-            if(self.tm.type == 1):
+            if(self.tm.type == 1 or self.tm.type == 7):
                 self.guyTM = True
                 _loc_7 = self.tm
                 # TODO self.pass(self.tm);
             else:
                 self.guyTM = False
         if(self.bm):
-            if(self.bm.type == 1):
+            if(self.bm.type == 1 or self.bm.type == 7):
                 self.guyBM = True
                 _loc_7 = self.bm
                 # TODO self.pass(self.bm);
             else:
                 self.guyBM = False
         if(self.lm):
-            if(self.lm.type == 1):
+            if(self.lm.type == 1 or self.lm.type == 7):
                 self.guyLM = True
                 _loc_7 = self.lm
                 # TODO self.pass(self.lm);
             else:
                 self.guyLM = False
         if(self.rm):
-            if(self.rm.type == 1):
+            if(self.rm.type == 1 or self.rm.type == 7):
                 self.guyRM = True
                 _loc_7 = self.rm
                 # TODO self.pass(self.rm);

@@ -85,3 +85,10 @@ class Checkpoint(Tile):
     self.rect.y = y+25
     self.id = -1
     self.surf.fill((100, 100, 52))
+
+class HiddenBlock(Tile):
+  def __init__(self, x=0, y=0):
+      super(HiddenBlock, self).__init__(x,y,type = 7)
+      self.surf = pygame.Surface((25, 25))
+      self.surf.fill((0, 0, 0))
+      self.surf.set_colorkey((255, 255, 255), RLEACCEL)

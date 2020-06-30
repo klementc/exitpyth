@@ -41,6 +41,9 @@ Enter commands: `t` then command (none for now, but soon :))
 # Log:
 
 - v0.1
+  - award of the worst client/server in the world (!connect command)
+    - more work on it to come
+  - added hidden blocks
   - fixed themine level code
   - chat (no online for now)
   - Sprite color different when jump available and when not

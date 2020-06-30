@@ -4,6 +4,7 @@ import pygame
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 500
 
+online = False
 
 from pygame.locals import (
   RLEACCEL,

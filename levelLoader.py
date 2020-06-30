@@ -32,6 +32,9 @@ class LevelLoader:
       elif(type == "6"):
         t = Checkpoint(int(x), int(y))
         level.addCheckpoint(t)
+      elif(type == "7"):
+        t = HiddenBlock(int(x), int(y))
+        level.createInvisibleBlock(t)
       else:
         t = Tile(int(x), int(y), 5)
         level.createTile(t)

@@ -72,6 +72,8 @@ class Level():
                     tile = Spike(round(loc2.x), round(loc2.y))
                 elif(type == 6):
                     tile = Checkpoint(round(loc2.x), round(loc2.y))
+                elif(type == 7):
+                    tile = HiddenBlock(round(loc2.x), round(loc2.y))
                 else:
                     tile = Tile(round(loc2.x), round(loc2.y),loc2.type)
             else:
@@ -108,7 +110,9 @@ class Level():
 
             if(tile.typeOf != 3 and loc2.rotation%90 == 0 and (tile.typeOf != 99 or loc2.name[:1] != "t")):
                 self.tiles.append(tile)
-            
+            elif(tile.typeOf == 7):
+                # invisible blocks
+                self.tiles.append(tile)
             elif(tile.typeOf == 3):
                 self.halfTiles.append(tile)
             
@@ -247,8 +251,7 @@ class Level():
         pass
 
     def createInvisibleBlock(self, p1):
-        # TODO
-        pass
+        self.createTileAt(p1, 7)
 
     def getChildByName(self, name):
         #print(str(self.tDict))
