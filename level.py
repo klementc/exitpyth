@@ -60,7 +60,7 @@ class Level():
             loc2 = l[0]
             type = int(l[1])
 
-            print("type: "+str(type))
+            #print("type: "+str(type))
             if(self.levelType=="SP"):
                 if(type == 1):
                     tile = Block(round(loc2.x), round(loc2.y))

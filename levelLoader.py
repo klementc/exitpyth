@@ -15,10 +15,10 @@ class LevelLoader:
 
     for tDesc in stri.split(";"):
       type,x,y = tDesc.split(",")
-      print(x, y, type)
+      #print(x, y, type)
       if(type == "1"):
         t = Tile(int(x), int(y),1)
-        print("t.type: "+str(t.type))
+        #print("t.type: "+str(t.type))
         level.createTile(t)
       elif(type == "2"):
         t = Tile(int(x), int(y),2)

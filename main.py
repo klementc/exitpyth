@@ -79,16 +79,24 @@ def main():
                         continue
                     c, v = textinput.get_text().split(" ",1)
                     if(c == "!set"):
-                        player.init_level(v)
+                        if(online):
+                            pass
+                            clI.setLevel(v, player)
+                            #player.init_level(onlineLevel["code"])
+                        else:
+                            player.init_level(v)
                     elif(c=="!say"):
-                        msgBuffer.append(player.username+": "+v)
+                        if(not online):
+                            msgBuffer.append(player.username+": "+v)
+                        else:
+                            clI.sendChat(v, player)
                         if(len(msgBuffer)>7):
                             msgBuffer=msgBuffer[1:]
                     elif(c=="!connect"):
                         print("Connecting to server!")
                         online = True
                         clI = client.Client()
-                        t = threading.Thread(target =clI.onlineClient, args = (v, onlineLevel, player, olPos)) 
+                        t = threading.Thread(target =clI.onlineClient, args = (v, onlineLevel, player, olPos, msgBuffer)) 
                         t.start()
                     showInput = False
                     textinput.clear_text()
