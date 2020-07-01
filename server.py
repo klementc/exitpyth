@@ -11,6 +11,7 @@ import threading
 from datetime import datetime
 
 lock = threading.Lock()
+lockLc = threading.Lock()
 
 HEADERSIZE = 16
 # data to keep on the server
@@ -67,10 +68,14 @@ def processRequest(msg):
     if(not (msg["ID"] in msgBuf)):
         msgBuf[msg["ID"]] = []
     if(msg["REQ"] == "NWLVL"):
+        lockLc.acquire()
         levelCode = msg["DATA"]
+        lockLc.release()
         hLvl = hash(levelCode)
     if(msg["REQ"] == "LVL"):
+        lockLc.acquire()
         ans["LVL"] = levelCode
+        lockLc.release()
         ans["HSHLVL"]= hLvl
     if(msg["REQ"] == "CHT"):
         for p in msgBuf:

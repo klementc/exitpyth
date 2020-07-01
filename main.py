@@ -80,7 +80,6 @@ def main():
                     c, v = textinput.get_text().split(" ",1)
                     if(c == "!set"):
                         if(online):
-                            pass
                             clI.setLevel(v, player)
                             #player.init_level(onlineLevel["code"])
                         else:
@@ -119,6 +118,7 @@ def main():
             screen.blit(e.surf, cam.apply(e))
         for e in player.curLevel.halfTiles:
             screen.blit(e.surf, cam.apply(e))
+        #    screen.blit(e.hitB, cam.apply(e))
         for e in player.curLevel.checkPoints:
             screen.blit(e.surf, cam.apply(e))
         for olP in olPos:

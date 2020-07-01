@@ -5,9 +5,11 @@ import time
 import threading
 
 HEADERSIZE = 16
+lock = threading.Lock()
 
 class Client():
   def __init__(self):
+    self.lock = threading.Lock()
     pass
   def onlineClient(self, add, ol, player, olP, msgbuf):
     prevPos = (-1,-1)
@@ -19,10 +21,17 @@ class Client():
     d = {"REQ":"LVL", "ID": player.username}
     msg = pickle.dumps(d)
     msg = bytes(f"{len(msg):<{HEADERSIZE}}", 'utf-8')+msg
-    print(msg)
-    self.s.send(msg)
-
-    msg = self.receiveMsg(self.s)
+    #print(msg)
+    print("ASKING FOR LEVEL")
+    lock.acquire()
+    try:
+      print("AAAAAAA")
+      self.s.send(msg)
+      print("BBBBBBB")
+      msg = self.receiveMsg(self.s)
+      print("CCCCCCCC")
+    finally:
+        lock.release()
     ol["code"] = msg["LVL"]
     ol["HSH"]= msg["HSHLVL"]
 
@@ -32,15 +41,26 @@ class Client():
         d = {"REQ":"POS", "ID": player.username, "DATA":pos}
         msg = pickle.dumps(d)
         msg = bytes(f"{len(msg):<{HEADERSIZE}}", 'utf-8')+msg
-        #print(msg)
-        self.s.send(msg)
+        print("UPDATING POS WITH SRV")
+        lock.acquire()
+        try:
+          self.s.send(msg)
+        finally:
+          lock.release()
+        
       
       d = {"REQ":"UPDPOS", "ID": player.username}
       msg = pickle.dumps(d)
       msg = bytes(f"{len(msg):<{HEADERSIZE}}", 'utf-8')+msg
       print("POSSSSS"+str(msg))
-      self.s.send(msg)
-      mr = self.receiveMsg(self.s)
+
+      lock.acquire()
+      try:
+        self.s.send(msg)
+        mr = self.receiveMsg(self.s)
+      finally:
+        lock.release()
+
       for m in range(len(mr["CHT"])):
         msgbuf.append(mr["CHT"][m])
         if(len(msgbuf)>7):
@@ -58,8 +78,15 @@ class Client():
         d = {"REQ":"LVL", "ID": player.username}
         msg = pickle.dumps(d)
         msg = bytes(f"{len(msg):<{HEADERSIZE}}", 'utf-8')+msg
-        self.s.send(msg)
-        msg = self.receiveMsg(self.s)
+        lock.acquire()
+        try:
+          self.s.send(msg)
+          print("RECEIVING")
+          msg = self.receiveMsg(self.s)
+          print("RECEIVED")
+        finally:
+          lock.release()
+
         print("CHANGE LEVELLLLLLLLLLLLLLLLLL" + str(msg))
         ol["code"] = msg["LVL"]
         ol["HSH"]= msg["HSHLVL"]
@@ -70,35 +97,46 @@ class Client():
     d = {"REQ":"NWLVL", "ID": player.username, "DATA":newCode}
     msg = pickle.dumps(d)
     msg = bytes(f"{len(msg):<{HEADERSIZE}}", 'utf-8')+msg
-    self.s.send(msg)
+    lock.acquire()
+    try:
+      self.s.send(msg)
+    finally:
+      lock.release()
 
   def sendChat(self, msg, player):
     d = {"REQ":"CHT", "ID": player.username, "DATA":msg}
     msg = pickle.dumps(d)
     msg = bytes(f"{len(msg):<{HEADERSIZE}}", 'utf-8')+msg
-    self.s.send(msg)
+    lock.acquire()
+    try:
+      self.s.send(msg)
+    finally:
+      lock.release()
+    
 
 
   def receiveMsg(self, s):
+    full_msg = b''
+    new_msg = True
     while True:
-      full_msg = b''
-      new_msg = True
-      while True:
-          msg = s.recv(16)
-          if(len(msg) == 0):
-              return
-          if new_msg:
-              msglen = int(msg[:HEADERSIZE])
-              new_msg = False
+      msg = s.recv(16)
+      if(len(msg) == 0):
+          return
+      if new_msg:
+          msglen = int(msg[:HEADERSIZE])
+          new_msg = False
 
-          #print(f"full message length: {msglen}")
+      #print(f"full message length: {msglen}")
 
-          full_msg += s.recv(msglen)
+      full_msg += s.recv(msglen)
+      while(len(full_msg) != msglen):
+        print("RCVNGGGGG")
+        full_msg+=s.recv(msglen - len(full_msg))
+      print(full_msg)
 
-          print(full_msg)
-          if len(full_msg) == msglen:
-              print(pickle.loads(full_msg))
-              return pickle.loads(full_msg)
+      print(pickle.loads(full_msg))
+      return pickle.loads(full_msg)
 
+      print("len prob "+str(msglen)+"/"+str(len(full_msg)))
   def stop(self):
     exit()

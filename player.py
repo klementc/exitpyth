@@ -22,9 +22,16 @@ class Player(pygame.sprite.Sprite):
         self.image.convert()
         #print("size: "+str(self.image.get_size()))
 
-        self.rect = self.image.get_rect(center=self.image.get_rect().center).inflate(-11.2, -10) #pygame.Rect(self.image.get_rect().left + 9, self.image.get_rect().top+5, 8, self.image.get_rect().height-10)
+        #self.rect = self.image.get_rect(center=self.image.get_rect().center).inflate(-11.2, -10) #pygame.Rect(self.image.get_rect().left + 9, self.image.get_rect().top+5, 8, self.image.get_rect().height-10)
 
-        #self.rect = pygame.Rect(self.image.get_rect().left+5.6, self.image.get_rect().top, 13.8, 15)
+        self.rect = pygame.Rect(self.image.get_rect().left+5, self.image.get_rect().top+5, 15, 15)
+
+        self.hitB = pygame.Surface((13.8, 15))
+        self.hitB.fill((0, 255, 255))
+        #self.rect = pygame.Rect(0,0,13.8,15)
+        #self.rect.center = self.image.get_rect().center
+        #self.rect.width = 13.8
+        #self.rect.height = 15
 
         #self.rect = pygame.Rect(self.image.get_rect().left+6.9, self.image.get_rect().top, 13.8, 15)
         #self.rect.center = (12.5,12.5)
@@ -152,7 +159,7 @@ class Player(pygame.sprite.Sprite):
             #self.image.fill((255, 255, 255))
             #self.image = pygame.image.load("sprites/char_noFlow.png").convert()
             #self.image.set_colorkey((0, 0, 0), RLEACCEL)
-            self.rect.height = .5
+            self.rect.height = 7.5
         else:
             #self.image = pygame.Surface((25, 25))
             #self.image.fill((255, 255, 255))
